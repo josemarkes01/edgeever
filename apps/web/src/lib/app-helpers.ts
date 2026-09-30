@@ -42,9 +42,7 @@ export type MemoDocumentAction =
   | "export-html"
   | "export-pdf"
   | "share-image"
-  | "save-as-template"
-  | "copy-wechat";
-export type MemoWeChatCopyResult = "editor" | "copied" | "error";
+  | "save-as-template";
 export type MemoDocumentActionRequest = {
   id: number;
   memoId: string;

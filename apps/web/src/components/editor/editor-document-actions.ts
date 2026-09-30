@@ -47,7 +47,6 @@ export const dispatchMemoDocumentAction = (
     saveAsTemplate: () => void;
     share: () => void;
     shareImage: () => void;
-    copyWeChat: () => void;
   },
   printWindow?: Window | null,
 ) => {
@@ -69,9 +68,6 @@ export const dispatchMemoDocumentAction = (
       break;
     case "save-as-template":
       handlers.saveAsTemplate();
-      break;
-    case "copy-wechat":
-      handlers.copyWeChat();
       break;
   }
 };

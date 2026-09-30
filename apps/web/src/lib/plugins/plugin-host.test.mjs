@@ -1,5 +1,4 @@
 import { afterAll, beforeEach, describe, expect, test } from "bun:test";
-import { restoreTestGlobal } from "../restore-test-global.mjs";
 
 const originalWindow = globalThis.window;
 const originalDocument = globalThis.document;
@@ -9,7 +8,7 @@ const values = new Map();
 const styles = new Map();
 const eventListeners = new Map();
 
-const stubWindow = {
+globalThis.window = {
   location: { href: "https://edgeever.example/settings" },
   localStorage: {
     getItem: (key) => values.get(key) ?? null,
@@ -21,9 +20,8 @@ const stubWindow = {
   addEventListener: (name, listener) => eventListeners.set(name, listener),
   removeEventListener: (name) => eventListeners.delete(name),
 };
-globalThis.window = stubWindow;
 
-const stubDocument = {
+globalThis.document = {
   documentElement: {
     classList: { contains: () => false },
     dataset: {},
@@ -36,13 +34,11 @@ const stubDocument = {
     },
   },
 };
-globalThis.document = stubDocument;
 
-const StubMutationObserver = class {
+globalThis.MutationObserver = class {
   observe() {}
   disconnect() {}
 };
-globalThis.MutationObserver = StubMutationObserver;
 
 const { EdgeEverPluginHost, applyPluginMarkdownEdits } = await import("./plugin-host.ts");
 const { sha256Hex } = await import("./github-plugin-distribution.ts");
@@ -50,9 +46,9 @@ const { withRepositoryMutationEvents } = await import("../repository-events.ts")
 const { results: capabilityResults } = await import('./plugin-capabilities.fixture.mjs');
 
 afterAll(() => {
-  restoreTestGlobal("window", originalWindow, stubWindow);
-  restoreTestGlobal("document", originalDocument, stubDocument);
-  restoreTestGlobal("MutationObserver", originalMutationObserver, StubMutationObserver);
+  globalThis.window = originalWindow;
+  globalThis.document = originalDocument;
+  globalThis.MutationObserver = originalMutationObserver;
 });
 
 const repository = {

@@ -61,8 +61,7 @@ const installLocalStorage = (initialValue = null) => {
 };
 
 afterEach(() => {
-  if (originalWindow === undefined) delete globalThis.window;
-  else globalThis.window = originalWindow;
+  globalThis.window = originalWindow;
 });
 
 describe("search shortcut scope", () => {

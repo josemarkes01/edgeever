@@ -14,7 +14,6 @@ export const buildGitHubFeedbackUrl = ({
   systemInfoHeading,
   systemInfoNotice,
   titlePrefix,
-  client,
 }: {
   contentHeading: string;
   contentPrompt: string;
@@ -28,9 +27,7 @@ export const buildGitHubFeedbackUrl = ({
   systemInfoHeading: string;
   systemInfoNotice: string;
   titlePrefix: string;
-  client?: string;
 }) => {
-  const systemInfoText = systemInfo.map((item) => `- ${item.label}: ${item.value}`).join("\n");
   const body = [
     `## ${contentHeading}`,
     "",
@@ -49,19 +46,9 @@ export const buildGitHubFeedbackUrl = ({
     `## ${systemInfoHeading}`,
     "",
     `<!-- ${systemInfoNotice} -->`,
-    systemInfoText,
+    ...systemInfo.map((item) => `- ${item.label}: ${item.value}`),
     "",
     `> ${privacyNotice}`,
   ].join("\n");
-  const params = new URLSearchParams({
-    title: titlePrefix,
-    body,
-    "system-info": systemInfoText,
-  });
-  if (diagnostics) {
-    params.set("template", "bug.yml");
-    params.set("diagnostics", diagnostics.text);
-  }
-  if (client) params.set("client", client);
-  return `${GITHUB_NEW_ISSUE_URL}?${params.toString()}`;
+  return `${GITHUB_NEW_ISSUE_URL}?title=${encodeURIComponent(titlePrefix)}&body=${encodeURIComponent(body)}`;
 };
